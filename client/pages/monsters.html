@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+      crossorigin="anonymous"
+    />
+    <title>monsters</title>
+  </head>
+  <body>
+
+    <div id="navbar">
+      <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="./home.html">Home</a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a class="nav-link active" aria-current="page" href="../pages/monsters.html">Monsters Editor</a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <div id="title">
+      <h1 class="text-center mt-5">Monsters</h1>
+    </div>
+
+    
+    <div id="monster-Add">
+      <div class="container mt-5 bg-success p-4 rounded">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <h2 class="text-center">Add monster to the system</h2>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-1">
+            <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#monsterModal">Add</a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal for monster adding -->
+    <div
+      class="modal fade"
+      id="monsterModal"
+      tabindex="-1"
+      aria-labelledby="monsterModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="monsterModalLabel">Monster Details</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <!-- Monster details will be dynamically inserted here -->
+            <div id="monster-details"></div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- monster accordion list -->
+    <div class="container mt-5">
+      <div class="accordion" id="monsterAccordion">
+        <!-- Monster cards will be dynamically inserted here -->
+      </div>
+    </div>
+
+
+    <!-- scripts -->
+    <script type="module" src="../scripts/monsters.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

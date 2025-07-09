@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+      integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="../styles/home.css" />
+    <title>home</title>
+  </head>
+  <body>
+    <div id="navbar">
+      <nav class="navbar navbar-expand-lg bg-body-tertiary">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="./home.html">Home</a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+              <li class="nav-item">
+                <a
+                  class="nav-link active"
+                  aria-current="page"
+                  href="../pages/monsters.html"
+                  >Monsters Editor</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
+
+    <div id="title">
+      <h1 class="text-center mt-5">Encounter Builder</h1>
+    </div>
+
+    <div id="monster-searchbar">
+      <div class="container mt-5 bg-success p-4 rounded">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <h2 class="text-center">Add monsters to the encounter</h2>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <div class="search-container">
+              <input
+                type="text"
+                id="search-input"
+                placeholder="Search for a monster..."
+                class="form-control w-10"
+              />
+              <ul id="suggestions-list"></ul>
+            </div>
+          </div>
+          <!-- select of number of monsters -->
+          <div class="col-md-2">
+            <select id="monster-count" class="form-select w-10">
+              <option value="" disabled selected>number of monsters</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="9">9</option>
+              <option value="10">10</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <button id="add-button" class="btn btn-primary">Add</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="damageBar">
+      <div class="container mt-5 p-4 rounded bg-danger">
+        <div class="row justify-content-center">
+          <div class="col-md-6">
+            <h2 class="text-center">Add damage to the encounter</h2>
+          </div>
+        </div>
+        <div class="row justify-content-center">
+          <div class="col-md-3">
+            <input
+              type="number"
+              id="damage-input"
+              placeholder="Enter damage amount"
+              class="form-control w-10"
+            />
+          </div>
+          <div class="col-md-2">
+            <select id="damageType" class="form-select w-10">
+              <option value="" disabled selected>damage type</option>
+              <option value="slashing">slashing</option>
+              <option value="magical-slashing">magical-slashing</option>
+              <option value="bludgeoning">bludgeoning</option>
+              <option value="magical-bludgeoning">magical-bludgeoning</option>
+              <option value="piercing">piercing</option>
+              <option value="magical-piercing">magical-piercing</option>
+              <option value="fire">fire</option>
+              <option value="cold">cold</option>
+              <option value="lightning">lightning</option>
+              <option value="acid">acid</option>
+              <option value="poison">poison</option>
+              <option value="radiant">radiant</option>
+              <option value="necrotic">necrotic</option>
+              <option value="force">force</option>
+              <option value="psychic">psychic</option>
+              <option value="thunder">thunder</option>
+              <option value="full">full</option>
+              <option value="half">half</option>
+            </select>
+          </div>
+          <div class="col-md-2">
+            <!-- <select id="monsterNum" class="form-select w-10">
+              <option value="" disabled selected>Select number of monsters to hurt</option>
+              <option value="1">1</option>
+              <option value="2">2</option>
+              <option value="3">3</option>
+              <option value="4">4</option>
+              <option value="5">5</option>
+              <option value="6">6</option>
+              <option value="7">7</option>
+              <option value="8">8</option>
+              <option value="all">all</option>
+            </select> -->
+            <div class="col-md-3">
+              <button id="selectMonstersBtn" class="btn btn-primary">
+                Select Monsters
+              </button>
+            </div>
+          </div>
+          <div class="col-md-2">
+            <button
+              id="damage-button"
+              class="btn btn-primary"
+              style="display: none"
+            >
+              Add Damage
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="monster-card-field" class="container mt-5">
+      <div class="row" id="monster-cards">
+        <!-- Monster cards will be dynamically inserted here -->
+      </div>
+    </div>
+
+    <!-- Modal for monster details -->
+    <div
+      class="modal fade"
+      id="monsterModal"
+      tabindex="-1"
+      aria-labelledby="monsterModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="monsterModalLabel">Monster Details</h5>
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <!-- Monster details will be dynamically inserted here -->
+            <div id="monster-details"></div>
+          </div>
+          <div class="modal-footer">
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-bs-dismiss="modal"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- scripts -->
+    <script type="module" src="../scripts/home.js"></script>
+    <script
+      src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q"
+      crossorigin="anonymous"
+    ></script>
+  </body>
+</html>

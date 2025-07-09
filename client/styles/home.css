@@ -1,0 +1,12 @@
+  .selectable {
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: 0.2s ease;
+  }
+  .selectable:hover {
+    border-color: #ccc;
+  }
+  .selected {
+    border-color: #007bff !important;
+    box-shadow: 0 0 10px #007bff;
+  }
