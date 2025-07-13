@@ -135,46 +135,49 @@ const editMonsterModal = document.getElementById("editMonsterModal");
 
 monsterAccordion.addEventListener("click", (event) => {
   if (event.target.classList.contains("edit-monster-btn")) {
+    
     const monsterId = event.target.dataset.monsterId;
-    const monster = monsters.find((m) => m.id === parseInt(monsterId));
+    
+    const monster = monsters.find((m) => m.id == monsterId);
     if (monster) {
       const modalBody = editMonsterModal.querySelector("#edit-monster-details");
-      modalBody.innerHTML = `
+      modalBody.innerHTML = ``;
+      modalBody.innerHTML += `
         <input id="editMonsterName" type="text" class="form-control mb-2" value="${
-          monster.name
+          monster.name?? "Unknown Monster"
         }" placeholder="Monster Name">
         <input id="editMonsterMaxHP" type="number" class="form-control mb-2" value="${
-          monster.hitPoints
+          monster.hitPoints?? "0"
         }" placeholder="Max HP">
         <input id="editMonsterAC" type="number" class="form-control mb-2" value="${
-          monster.armorClass
+          monster.armorClass?? "10"
         }" placeholder="Armor Class">
         <input id="editMonsterCurrentHP" type="number" class="form-control mb-2" value="${
-          monster.currentHP
+          monster.currentHP?? "0"
         }" placeholder="Current HP">
         <input id="editMonsterType" type="text" class="form-control mb-2" value="${
-          monster.type
+          monster.type?? "Unknown Type"
         }" placeholder="Type">
         <input id="editMonsterSize" type="text" class="form-control mb-2" value="${
-          monster.size
+          monster.size?? "Medium"
         }" placeholder="Size">
         <input id="editMonsterAlignment" type="text" class="form-control mb-2" value="${
-          monster.alignment
+          monster.alignment?? "Neutral"
         }" placeholder="Alignment">
         <input id="editMonsterCR" type="text" class="form-control mb-2" value="${
-          monster.challengeRating
+          monster.challengeRating?? "1/4"
         }" placeholder="Challenge Rating">
         <input id="editMonsterSpeed" type="text" class="form-control mb-2" value="${
-          monster.speed
+          monster.speed??  "30 ft"
         }" placeholder="Speed">
         <input id="editMonsterStats" type="text" class="form-control mb-2" value='${JSON.stringify(
-          monster.stats
+          monster.stats || { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 }
         )}' placeholder='Stats (JSON)'>
         <input id="editMonsterSavingThrows" type="text" class="form-control mb-2" value='${JSON.stringify(
-          monster.savingThrows
+          monster.savingThrows || {}
         )}' placeholder='Saving Throws (JSON)'>
         <input id="editMonsterSkills" type="text" class="form-control mb-2" value='${JSON.stringify(
-          monster.skills
+          monster.skills || {}
         )}' placeholder='Skills (JSON)'>
         <input id="editMonsterDamageResistances" type="text" class="form-control mb-2" value="${
           monster.damageResistances || ""
@@ -214,81 +217,72 @@ monsterAccordion.addEventListener("click", (event) => {
 
       // Important: use setTimeout to ensure DOM is updated
       setTimeout(() => {
-        document
-          .getElementById("saveEditedMonsterBtn")
-          .addEventListener("click", () => {
-            // Add event listener for saving changes
-            const saveEditedMonsterBtn = document.getElementById(
-              "saveEditedMonsterBtn"
-            );
-            saveEditedMonsterBtn.addEventListener("click", () => {
-              // Get updated values from the modal
-              const updatedMonster = {
-                id: monster.id,
-                name: document.getElementById("editMonsterName").value,
-                hitPoints: parseInt(
-                  document.getElementById("editMonsterMaxHP").value
-                ),
-                armorClass: parseInt(
-                  document.getElementById("editMonsterAC").value
-                ),
-                currentHP: parseInt(
-                  document.getElementById("editMonsterCurrentHP").value
-                ),
-                type: document.getElementById("editMonsterType").value,
-                size: document.getElementById("editMonsterSize").value,
-                alignment: document.getElementById("editMonsterAlignment")
-                  .value,
-                challengeRating: document.getElementById("editMonsterCR").value,
-                speed: document.getElementById("editMonsterSpeed").value,
-                stats: JSON.parse(
-                  document.getElementById("editMonsterStats").value
-                ),
-                savingThrows: JSON.parse(
-                  document.getElementById("editMonsterSavingThrows").value
-                ),
-                skills: JSON.parse(
-                  document.getElementById("editMonsterSkills").value
-                ),
-                damageResistances: document.getElementById(
-                  "editMonsterDamageResistances"
-                ).value,
-                damageImmunities: document.getElementById(
-                  "editMonsterDamageImmunities"
-                ).value,
-                damageVulnerabilities: document.getElementById(
-                  "editMonsterDamageVulnerabilities"
-                ).value,
-                conditionImmunities: document.getElementById(
-                  "editMonsterConditionImmunities"
-                ).value,
-                senses: document.getElementById("editMonsterSenses").value,
-                passivePerception: document.getElementById(
-                  "editMonsterPassivePerception"
-                ).value,
-                languages: document.getElementById("editMonsterLanguages")
-                  .value,
-                actions: JSON.parse(
-                  document.getElementById("editMonsterActions").value
-                ),
-                abilities: JSON.parse(
-                  document.getElementById("editMonsterAbilities").value
-                ),
-                img: document.getElementById("editMonsterImg").value,
-              };
+        const saveEditedMonsterBtn = document.getElementById(
+          "saveEditedMonsterBtn"
+        );
+        saveEditedMonsterBtn.addEventListener("click", () => {
+          // Get updated values from the modal
+          const updatedMonster = {
+            id: monster.id,
+            name: document.getElementById("editMonsterName").value,
+            hitPoints: parseInt(
+              document.getElementById("editMonsterMaxHP").value
+            ),
+            armorClass: parseInt(
+              document.getElementById("editMonsterAC").value
+            ),
+            currentHP: parseInt(
+              document.getElementById("editMonsterCurrentHP").value
+            ),
+            type: document.getElementById("editMonsterType").value,
+            size: document.getElementById("editMonsterSize").value,
+            alignment: document.getElementById("editMonsterAlignment").value,
+            challengeRating: document.getElementById("editMonsterCR").value,
+            speed: document.getElementById("editMonsterSpeed").value,
+            stats: JSON.parse(
+              document.getElementById("editMonsterStats").value
+            ),
+            savingThrows: JSON.parse(
+              document.getElementById("editMonsterSavingThrows").value
+            ),
+            skills: JSON.parse(
+              document.getElementById("editMonsterSkills").value
+            ),
+            damageResistances: document.getElementById(
+              "editMonsterDamageResistances"
+            ).value,
+            damageImmunities: document.getElementById(
+              "editMonsterDamageImmunities"
+            ).value,
+            damageVulnerabilities: document.getElementById(
+              "editMonsterDamageVulnerabilities"
+            ).value,
+            conditionImmunities: document.getElementById(
+              "editMonsterConditionImmunities"
+            ).value,
+            senses: document.getElementById("editMonsterSenses").value,
+            passivePerception: document.getElementById(
+              "editMonsterPassivePerception"
+            ).value,
+            languages: document.getElementById("editMonsterLanguages").value,
+            actions: JSON.parse(
+              document.getElementById("editMonsterActions").value
+            ),
+            abilities: JSON.parse(
+              document.getElementById("editMonsterAbilities").value
+            ),
+            img: document.getElementById("editMonsterImg").value,
+          };
 
-              // Update the monster in the array
-              const monsterIndex = monsters.findIndex(
-                (m) => m.id === monster.id
-              );
-              if (monsterIndex !== -1) {
-                monsters[monsterIndex] = updatedMonster;
-              }
+          // Update the monster in the array
+          const monsterIndex = monsters.findIndex((m) => m.id === monster.id);
+          if (monsterIndex !== -1) {
+            monsters[monsterIndex] = updatedMonster;
+          }
 
-              // Close the modal
-              bootstrapModal.hide();
-            });
-          });
+          // Close the modal
+          bootstrapModal.hide();
+        });
       }, 0);
     }
   } else if (event.target.classList.contains("delete-monster-btn")) {
