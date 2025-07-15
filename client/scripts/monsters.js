@@ -1,3 +1,4 @@
+
 // modal functionality
 // Get the modal
 const modal = document.getElementById("monsterModal");
@@ -45,11 +46,14 @@ monsterModal.addEventListener("show.bs.modal", function (event) {
   };
 });
 
-let monsters = await fetch("../../server/data/monsters.json").then(
-  (response) => {
-    return response.json();
-  }
-);
+let monsters = await fetch("http://127.0.0.1:3000/api/monsters/")
+  .then((response) => response.json())
+  .catch((error) => {
+    console.error("Error fetching monsters:", error);
+    return [];
+  });
+  console.log("Monsters fetched:", monsters);
+  
 // Display monsters in an accordion format
 const monsterAccordion = document.getElementById("monsterAccordion");
 monsters.forEach((monster) => {
@@ -135,43 +139,49 @@ const editMonsterModal = document.getElementById("editMonsterModal");
 
 monsterAccordion.addEventListener("click", (event) => {
   if (event.target.classList.contains("edit-monster-btn")) {
-    
     const monsterId = event.target.dataset.monsterId;
-    
+
     const monster = monsters.find((m) => m.id == monsterId);
     if (monster) {
       const modalBody = editMonsterModal.querySelector("#edit-monster-details");
       modalBody.innerHTML = ``;
       modalBody.innerHTML += `
         <input id="editMonsterName" type="text" class="form-control mb-2" value="${
-          monster.name?? "Unknown Monster"
+          monster.name ?? "Unknown Monster"
         }" placeholder="Monster Name">
         <input id="editMonsterMaxHP" type="number" class="form-control mb-2" value="${
-          monster.hitPoints?? "0"
+          monster.hitPoints ?? "0"
         }" placeholder="Max HP">
         <input id="editMonsterAC" type="number" class="form-control mb-2" value="${
-          monster.armorClass?? "10"
+          monster.armorClass ?? "10"
         }" placeholder="Armor Class">
         <input id="editMonsterCurrentHP" type="number" class="form-control mb-2" value="${
-          monster.currentHP?? "0"
+          monster.currentHP ?? "0"
         }" placeholder="Current HP">
         <input id="editMonsterType" type="text" class="form-control mb-2" value="${
-          monster.type?? "Unknown Type"
+          monster.type ?? "Unknown Type"
         }" placeholder="Type">
         <input id="editMonsterSize" type="text" class="form-control mb-2" value="${
-          monster.size?? "Medium"
+          monster.size ?? "Medium"
         }" placeholder="Size">
         <input id="editMonsterAlignment" type="text" class="form-control mb-2" value="${
-          monster.alignment?? "Neutral"
+          monster.alignment ?? "Neutral"
         }" placeholder="Alignment">
         <input id="editMonsterCR" type="text" class="form-control mb-2" value="${
-          monster.challengeRating?? "1/4"
+          monster.challengeRating ?? "1/4"
         }" placeholder="Challenge Rating">
         <input id="editMonsterSpeed" type="text" class="form-control mb-2" value="${
-          monster.speed??  "30 ft"
+          monster.speed ?? "30 ft"
         }" placeholder="Speed">
         <input id="editMonsterStats" type="text" class="form-control mb-2" value='${JSON.stringify(
-          monster.stats || { str: 10, dex: 10, con: 10, int: 10, wis: 10, cha: 10 }
+          monster.stats || {
+            str: 10,
+            dex: 10,
+            con: 10,
+            int: 10,
+            wis: 10,
+            cha: 10,
+          }
         )}' placeholder='Stats (JSON)'>
         <input id="editMonsterSavingThrows" type="text" class="form-control mb-2" value='${JSON.stringify(
           monster.savingThrows || {}

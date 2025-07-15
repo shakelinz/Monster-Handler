@@ -4,7 +4,7 @@ const readData = (path) => {
   try {
     return jf.readFile(path);
   } catch (error) {
-    return error.massage;
+    return error.message;
   }
 };
 

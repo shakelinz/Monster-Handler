@@ -1,58 +1,58 @@
 const localPath = "../data/monsters.json";
 const DL = require("../DLs/jsonFileDl.js");
 
-const getAllUsers = async () => {
+const getAllMonsters = async () => {
   try {
-    const users = await DL.readData(localPath);
-    return users;
+    const monsters = await DL.readData(localPath);
+    return monsters;
   } catch (error) {
     return error.message;
   }
 };
 
-const getUserById = async (id) => {
-  const users = await DL.readData(localPath);
-  const user = users.find((user) => user.id === id);
-  if (!user) {
-    return `User with id ${id} not found`;
+const getMonsterById = async (id) => {
+  const monsters = await DL.readData(localPath);
+  const monster = monsters.find((monster) => monster.id === id);
+  if (!monster) {
+    return `monster with id ${id} not found`;
   }
-  return user;
+  return monster;
 };
 
-const saveNewUser = async (user) => {
-  const users = await DL.readData(localPath);
-  user.id = users[users.length - 1].id + 1;
-  users.push(user);
-  await DL.saveData(localPath, users);
-  return "User added successfully";
+const saveNewMonster = async (monster) => {
+  const monsters = await DL.readData(localPath);
+  monster.id = monsters[monsters.length - 1].id + 1;
+  monsters.push(monster);
+  await DL.saveData(localPath, monsters);
+  return "monster added successfully";
 };
 
-const updateUser = async (id, updatedUser) => {
-  const users = await DL.readData(localPath);
-  const index = users.findIndex((user) => user.id === id);
+const updateMonster = async (id, updatedMonster) => {
+  const monsters = await DL.readData(localPath);
+  const index = monsters.findIndex((monster) => monster.id === id);
   if (index === -1) {
-    return `User with id ${id} not found`;
+    return `monster with id ${id} not found`;
   }
-  users[index] = { ...users[index], ...updatedUser };
-  await DL.saveData(localPath, users);
-  return "User updated successfully";
+  monsters[index] = { ...monsters[index], ...updatedMonster };
+  await DL.saveData(localPath, monsters);
+  return "monster updated successfully";
 };
 
-const deleteUser = async (id) => {
-  const users = await DL.readData(localPath);
-  const index = users.findIndex((user) => user.id === id);
+const deleteMonster = async (id) => {
+  const monsters = await DL.readData(localPath);
+  const index = monsters.findIndex((monster) => monster.id === id);
   if (index === -1) {
-    return `User with id ${id} not found`;
+    return `monster with id ${id} not found`;
   }
-  users.splice(index, 1);
-  await DL.saveData(localPath, users);
-  return "User deleted successfully";
+  monsters.splice(index, 1);
+  await DL.saveData(localPath, monsters);
+  return "monster deleted successfully";
 };
 
 module.exports = {
-  getAllUsers,
-  getUserById,
-  saveNewUser,
-  updateUser,
-  deleteUser,
+  getAllMonsters,
+  getMonsterById,
+  saveNewMonster,
+  updateMonster,
+  deleteMonster,
 };
