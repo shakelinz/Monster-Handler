@@ -33,7 +33,7 @@ router.put("/:id", async (req, res) => {
   const updatedMonster = req.body;
   const result = await BL.updateMonster(id, updatedMonster);
 
-  if (typeof result === "string" && result.includes("not found")) {
+  if (typeof result === "string" && result.includes(`monster with id ${id} not found`)) {
     return res.status(404).json({ error: result });
   }
 

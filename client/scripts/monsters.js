@@ -1,4 +1,3 @@
-
 // modal functionality
 // Get the modal
 const modal = document.getElementById("monsterModal");
@@ -34,16 +33,6 @@ monsterModal.addEventListener("show.bs.modal", function (event) {
     <button class="btn btn-primary" id="saveMonsterBtn">Save Monster</button>
 
   `;
-
-  // Add edit functionality
-  const saveMonsterBtn = document.getElementById("saveMonsterBtn");
-  saveMonsterBtn.onclick = function () {
-    console.log(`Editing monster with ID: ${monsterId}`);
-    // Here you would typically open an edit form or redirect to an edit page
-    // For example:
-    // window.location.href = `/edit-monster/${monsterId}`;
-    // Or you could open a modal with an edit form
-  };
 });
 
 let monsters = await fetch("http://127.0.0.1:3000/api/monsters/")
@@ -52,8 +41,7 @@ let monsters = await fetch("http://127.0.0.1:3000/api/monsters/")
     console.error("Error fetching monsters:", error);
     return [];
   });
-  console.log("Monsters fetched:", monsters);
-  
+
 // Display monsters in an accordion format
 const monsterAccordion = document.getElementById("monsterAccordion");
 monsters.forEach((monster) => {
@@ -76,10 +64,10 @@ monsters.forEach((monster) => {
       <div class="accordion-body">
       <img src="${monster.img}" alt="${monster.name}" class="img-fluid">
         <p><strong>Alignment:</strong> ${monster.alignment}</p>
-        <p><strong>Armor Class:</strong> ${monster.armorClass}</p>
-        <p><strong>Hit Points:</strong> ${monster.hitPoints}</p>
+        <p><strong>Armor Class:</strong> ${monster.ac}</p>
+        <p><strong>Hit Points:</strong> ${monster.hp}</p>
         <p><strong>Speed:</strong> ${monster.speed}</p>
-        <p><strong>Challenge Rating:</strong> ${monster.challengeRating}</p>
+        <p><strong>Challenge Rating:</strong> ${monster.cr}</p>
         <strong>Alignment:</strong> ${monster.alignment} <br>
     <strong>speed:</strong> ${monster.speed} <br>
     <strong>stats:</strong> ${JSON.stringify(monster.stats)} <br>
@@ -137,7 +125,7 @@ monsters.forEach((monster) => {
 // Add event listener to the modal for editing monsters
 const editMonsterModal = document.getElementById("editMonsterModal");
 
-monsterAccordion.addEventListener("click", (event) => {
+monsterAccordion.addEventListener("click", async(event) => {
   if (event.target.classList.contains("edit-monster-btn")) {
     const monsterId = event.target.dataset.monsterId;
 
@@ -150,10 +138,10 @@ monsterAccordion.addEventListener("click", (event) => {
           monster.name ?? "Unknown Monster"
         }" placeholder="Monster Name">
         <input id="editMonsterMaxHP" type="number" class="form-control mb-2" value="${
-          monster.hitPoints ?? "0"
+          monster.hp ?? "0"
         }" placeholder="Max HP">
         <input id="editMonsterAC" type="number" class="form-control mb-2" value="${
-          monster.armorClass ?? "10"
+          monster.ac ?? "10"
         }" placeholder="Armor Class">
         <input id="editMonsterCurrentHP" type="number" class="form-control mb-2" value="${
           monster.currentHP ?? "0"
@@ -220,6 +208,7 @@ monsterAccordion.addEventListener("click", (event) => {
           monster.img || ""
         }" placeholder='Image URL'>
         <button class="btn btn-primary" id="saveEditedMonsterBtn">Save Changes</button>
+        
       `;
       // Show the modal
       const bootstrapModal = new bootstrap.Modal(editMonsterModal);
@@ -230,15 +219,15 @@ monsterAccordion.addEventListener("click", (event) => {
         const saveEditedMonsterBtn = document.getElementById(
           "saveEditedMonsterBtn"
         );
-        saveEditedMonsterBtn.addEventListener("click", () => {
+        saveEditedMonsterBtn.addEventListener("click", async() => {
           // Get updated values from the modal
           const updatedMonster = {
             id: monster.id,
             name: document.getElementById("editMonsterName").value,
-            hitPoints: parseInt(
+            hp: parseInt(
               document.getElementById("editMonsterMaxHP").value
             ),
-            armorClass: parseInt(
+            ac: parseInt(
               document.getElementById("editMonsterAC").value
             ),
             currentHP: parseInt(
@@ -284,11 +273,16 @@ monsterAccordion.addEventListener("click", (event) => {
             img: document.getElementById("editMonsterImg").value,
           };
 
-          // Update the monster in the array
-          const monsterIndex = monsters.findIndex((m) => m.id === monster.id);
-          if (monsterIndex !== -1) {
-            monsters[monsterIndex] = updatedMonster;
-          }
+          // update the monster in monsters.json using fetch API
+          
+          await fetch(`http://127.0.0.1:3000/api/monsters/${monster.id}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(updatedMonster),
+          });
+          
 
           // Close the modal
           bootstrapModal.hide();
@@ -297,14 +291,9 @@ monsterAccordion.addEventListener("click", (event) => {
     }
   } else if (event.target.classList.contains("delete-monster-btn")) {
     const monsterId = event.target.dataset.monsterId;
-    const monsterIndex = monsters.findIndex(
-      (m) => m.id === parseInt(monsterId)
-    );
-    if (monsterIndex !== -1) {
-      // Remove the monster from the array
-      monsters.splice(monsterIndex, 1);
-      // Remove the monster card from the DOM
-      event.target.closest(".accordion-item").remove();
-    }
+    await fetch(`http://127.0.0.1:3000/api/monsters/${monsterId}`, {
+      method: "DELETE",
+    });
+    window.location.reload(); // Reload the page to reflect changes
   }
 });

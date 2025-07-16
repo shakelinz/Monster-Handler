@@ -1,4 +1,4 @@
-const localPath = "../data/monsters.json";
+const localPath = "./data/monsters.json";
 const DL = require("../DLs/jsonFileDl.js");
 
 const getAllMonsters = async () => {
@@ -29,11 +29,12 @@ const saveNewMonster = async (monster) => {
 
 const updateMonster = async (id, updatedMonster) => {
   const monsters = await DL.readData(localPath);
-  const index = monsters.findIndex((monster) => monster.id === id);
+  const index = monsters.findIndex((monster) => monster.id == id);
   if (index === -1) {
     return `monster with id ${id} not found`;
   }
   monsters[index] = { ...monsters[index], ...updatedMonster };
+
   await DL.saveData(localPath, monsters);
   return "monster updated successfully";
 };
