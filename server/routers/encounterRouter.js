@@ -1,6 +1,7 @@
+
 const express = require("express");
 const router = express.Router();
-const BL = require("../BLs/monstersBl");
+const BL = require("../BLs/encounterBl");
 
 // Get all monsters
 router.get("/", async (req, res) => {
@@ -12,18 +13,6 @@ router.get("/", async (req, res) => {
 router.get("/:id", async (req, res) => {
   const id = parseInt(req.params.id);
   const result = await BL.getMonsterById(id);
-
-  if (typeof result === "string" && result.includes("not found")) {
-    return res.status(404).json({ error: result });
-  }
-
-  res.json(result);
-});
-
-// get monster by name
-router.get("/name/:name", async (req, res) => {
-  const name = req.params.name;
-  const result = await BL.getMonsterByName(name);
 
   if (typeof result === "string" && result.includes("not found")) {
     return res.status(404).json({ error: result });

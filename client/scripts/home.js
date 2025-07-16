@@ -1,24 +1,18 @@
-let monsters = await fetch("../../server/data/encounters/encounter0.json").then(
-  (response) => {
-    return response.json();
-  }
-);
-
 // search functionality
 const searchInput = document.getElementById("search-input");
 const suggestionsList = document.getElementById("suggestions-list");
-
 // Sample data for suggestions
-let monsterNames = monsters.map((monster) => monster.name);
-
-searchInput.addEventListener("input", function () {
+searchInput.addEventListener("input", async function () {
   const query = this.value.toLowerCase();
   suggestionsList.innerHTML = ""; // Clear previous suggestions
 
   if (query.length === 0) {
     return; // No suggestions if input is empty
   }
-
+  let originMonsters = await fetch("http://127.0.0.1:3000/api/monsters/").then(
+    (response) => response.json()
+  );
+  let monsterNames = originMonsters.map((monster) => monster.name);
   const filteredSuggestions = monsterNames.filter((item) =>
     item.toLowerCase().startsWith(query)
   );
@@ -33,17 +27,60 @@ searchInput.addEventListener("input", function () {
     suggestionsList.appendChild(listItem);
   });
 });
-
 // Close suggestions when clicking outside the search bar
 document.addEventListener("click", function (event) {
   if (!event.target.closest(".search-container")) {
     suggestionsList.innerHTML = "";
   }
 });
+// Add a click event listener to the add button
+const addMonsterBtn = document.getElementById("add-button");
+addMonsterBtn.addEventListener("click", async function () {
+  // add a monster form monster.json to encounter.json
+  const monsterName = searchInput.value.trim();
+  const monster = await fetch(`http://127.0.0.1:3000/api/monsters/name/${monsterName}`)
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Monster not found");
+      }
+      return response.json();
+    })
+    .catch((error) => {
+      console.error("Error fetching monster:", error);
+      alert("Monster not found. Please check the name and try again.");
+      return null;
+    });
+  if (monster) {
+    // Add the monsters to the encounter.json
+    const monsterNum = document.getElementById("monster-count").value;
+    if(monsterNum == "Number of monsters") {
+      alert("Please select the number of monsters to add.");
+      return;
+    }
+    for (let i = 0; i < monsterNum; i++) {
+      // Clone the monster object to avoid modifying the original
+      const monsterClone = { ...monster };
+      // Reset currentHP to max HP
+      monsterClone.currentHP = monsterClone.hp;
+      // Add the monster to the encounter
+      await fetch("http://127.0.0.1:3000/api/encounter/", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(monsterClone),
+      });
+    }
+  }
+
+});
+
 
 // Display monsters in cards
 let monsterCardsContainer = document.getElementById("monster-cards"); // Clear existing content
-
+let monsters = await fetch("http://127.0.0.1:3000/api/encounter/").then(
+  (response) => response.json()
+);
 monsters.forEach((monster) => {
   let monsterCard = document.createElement("div");
   monsterCard.className = "col-md-4 mb-4";
@@ -73,38 +110,25 @@ monsters.forEach((monster) => {
         <p class="card-text">max HP: ${monster.hp}</p>
         <p class="card-text">AC: ${monster.ac}</p>
         <p class="card-text">current HP: ${monster.currentHP}</p>
-        <button class="btn btn-danger" id="deleteMonsterBtn" data-monster-id="${monster.id}">Delete Monster</button>
-        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#monsterModal" data-monster-id="${monster.id}">View Details and edit</a>
+        <button class="btn btn-danger" id="deleteMonsterBtn${monster.encounterId}" data-monster-id="${monster.encounterId}">Delete Monster</button>
+        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#monsterModal" data-monster-id="${monster.encounterId}">View Details and edit</a>
       </div>
     </div>
   `;
   monsterCardsContainer.appendChild(monsterCard);
+  //delete functionality
+  const deleteMonsterBtn = document.getElementById(`deleteMonsterBtn${monster.encounterId}`);
+  deleteMonsterBtn.addEventListener("click", async function (event) {
+    event.preventDefault(); // Prevent default link behavior
+    const monsterId = monster.encounterId; // Get the monster ID from the button's data attribute
+    console.log(`Deleting monster with ID: ${monsterId}`);
+    
+    await fetch(`http://127.0.0.1:3000/api/encounter/${monsterId}`, {
+      method: "DELETE",
+    });
+  });
 });
 
-// Add delete functionality
-const deleteMonsterBtn = document.getElementById("deleteMonsterBtn");
-deleteMonsterBtn.addEventListener("click", function (event) {
-  event.preventDefault(); // Prevent default link behavior
-  const monsterId = this.getAttribute("data-monster-id");
-  console.log(`Deleting monster with ID: ${monsterId}`);
-  // Here you would typically send a request to the server to delete the monster
-  // For example:
-  // fetch(`/api/monsters/${monsterId}`, {
-  //   method: 'DELETE',
-  //   headers: { 'Content-Type': 'application/json' }
-  // }).then(response => {
-  //   if (response.ok) {
-  //     console.log('Monster deleted successfully');
-  //     // Optionally, you can remove the card from the DOM
-  //     const card = this.closest('.card');
-  //     card.remove();
-  //   } else {
-  //     console.error('Failed to delete monster');
-  //   }
-  // });
-  // For now, just log the action
-  console.log(`Monster with ID ${monsterId} would be deleted here.`);
-});
 
 // monsters selection functionality
 const selectMonstersBtn = document.getElementById("selectMonstersBtn");

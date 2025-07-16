@@ -328,6 +328,9 @@ monsterAccordion.addEventListener("click", async(event) => {
     }
   } else if (event.target.classList.contains("delete-monster-btn")) {
     const monsterId = event.target.dataset.monsterId;
+    if (!confirm(`Are you sure you want to delete monster with ID ${monsterId}?`)) {
+      return;
+    }
     await fetch(`http://127.0.0.1:3000/api/monsters/${monsterId}`, {
       method: "DELETE",
     });

@@ -1,4 +1,4 @@
-const localPath = "./data/monsters.json";
+const localPath = "./data/encounters/encounter0.json";
 const DL = require("../DLs/jsonFileDl.js");
 
 const getAllMonsters = async () => {
@@ -10,41 +10,35 @@ const getAllMonsters = async () => {
   }
 };
 
-const getMonsterById = async (id) => {
+const getMonsterById = async (encounterId) => {
   const monsters = await DL.readData(localPath);
-  const monster = monsters.find((monster) => monster.id == id);
+  const monster = monsters.find((monster) => monster.encounterId == encounterId);
   if (!monster) {
-    return `monster with id ${id} not found`;
-  }
-  return monster;
-};
-
-const getMonsterByName = async (name) => {
-  const monsters = await DL.readData(localPath);
-  const monster = monsters.find((monster) => monster.name.toLowerCase() == name.toLowerCase());
-  if (!monster) {
-    return `monster with name ${name} not found`;
+    return `monster with encounterId ${encounterId} not found`;
   }
   return monster;
 };
 
 const saveNewMonster = async (monster) => {
   const monsters = await DL.readData(localPath);
+
   const newId = monsters.length > 0
-    ? parseInt(monsters[monsters.length - 1].id) + 1
+    ? parseInt(monsters[monsters.length - 1].encounterId) + 1
     : 1;
 
-  monster.id = newId;
+  monster.encounterId = newId;
   monsters.push(monster);
   await DL.saveData(localPath, monsters);
+
   return "monster added successfully";
 };
 
-const updateMonster = async (id, updatedMonster) => {
+
+const updateMonster = async (encounterId, updatedMonster) => {
   const monsters = await DL.readData(localPath);
-  const index = monsters.findIndex((monster) => monster.id == id);
+  const index = monsters.findIndex((monster) => monster.encounterId == encounterId);
   if (index === -1) {
-    return `monster with id ${id} not found`;
+    return `monster with encounterId ${encounterId} not found`;
   }
   monsters[index] = { ...monsters[index], ...updatedMonster };
 
@@ -52,11 +46,11 @@ const updateMonster = async (id, updatedMonster) => {
   return "monster updated successfully";
 };
 
-const deleteMonster = async (id) => {
+const deleteMonster = async (encounterId) => {
   const monsters = await DL.readData(localPath);
-  const index = monsters.findIndex((monster) => monster.id == id);
+  const index = monsters.findIndex((monster) => monster.encounterId == encounterId);
   if (index === -1) {
-    return `monster with id ${id} not found`;
+    return `monster with encounterId ${encounterId} not found`;
   }
   monsters.splice(index, 1);
   await DL.saveData(localPath, monsters);
@@ -66,7 +60,6 @@ const deleteMonster = async (id) => {
 module.exports = {
   getAllMonsters,
   getMonsterById,
-  getMonsterByName,
   saveNewMonster,
   updateMonster,
   deleteMonster,
