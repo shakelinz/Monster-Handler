@@ -1,10 +1,8 @@
-// modal functionality
-// Get the modal
-const modal = document.getElementById("monsterModal");
-const monsterModal = document.getElementById("monsterModal");
-monsterModal.addEventListener("show.bs.modal", function (event) {
+// add monster modal functionality
+const addMonsterModal = document.getElementById("addMonsterModal");
+addMonsterModal.addEventListener("show.bs.modal", function (event) {
   // Update the modal's content
-  const modalBody = monsterModal.querySelector(".modal-body");
+  const modalBody = addMonsterModal.querySelector(".modal-body");
 
   modalBody.innerHTML = `
     <input id="monsterName" type="text" class="form-control mb-2" placeholder="Monster Name">
@@ -33,8 +31,47 @@ monsterModal.addEventListener("show.bs.modal", function (event) {
     <button class="btn btn-primary" id="saveMonsterBtn">Save Monster</button>
 
   `;
+
+  // Add event listener to the save button
+  const saveMonsterBtn = modalBody.querySelector("#saveMonsterBtn");
+  saveMonsterBtn.addEventListener("click", async () => {
+    const newMonster = {
+      name: document.getElementById("monsterName").value,
+      hp: parseInt(document.getElementById("monsterMaxHP").value),
+      ac: parseInt(document.getElementById("monsterAC").value),
+      currentHP: parseInt(document.getElementById("monsterCurrentHP").value),
+      type: document.getElementById("monsterType").value,
+      size: document.getElementById("monsterSize").value,
+      alignment: document.getElementById("monsterAlignment").value,
+      challengeRating: document.getElementById("monsterCR").value,
+      speed: document.getElementById("monsterSpeed").value,
+      stats: JSON.parse(document.getElementById("monsterStats").value || "{}"),
+      savingThrows: JSON.parse(document.getElementById("monsterSavingThrows").value || "{}"),
+      skills: JSON.parse(document.getElementById("monsterSkills").value || "{}"),
+      damageResistances: document.getElementById("monsterDamageResistances").value,
+      damageImmunities: document.getElementById("monsterDamageImmunities").value,
+      damageVulnerabilities: document.getElementById("monsterDamageVulnerabilities").value,
+      conditionImmunities: document.getElementById("monsterConditionImmunities").value,
+      senses: document.getElementById("monsterSenses").value,
+      passivePerception: document.getElementById("monsterPassivePerception").value,
+      languages: document.getElementById("monsterLanguages").value,
+      actions: JSON.parse(document.getElementById("monsterActions").value || "[]"),
+      abilities: JSON.parse(document.getElementById("monsterAbilities").value || "[]"),
+      img: document.getElementById("monsterImg").value,
+    };
+
+    // Send the new monster to the server
+    await fetch(`http://127.0.0.1:3000/api/monsters/`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(newMonster),
+    });
+  });
 });
 
+// get api request
 let monsters = await fetch("http://127.0.0.1:3000/api/monsters/")
   .then((response) => response.json())
   .catch((error) => {
