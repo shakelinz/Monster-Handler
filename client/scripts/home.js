@@ -186,8 +186,15 @@ selectMonstersBtn.addEventListener("click", function () {
           ) {
             finalDamage = Math.ceil(finalDamage / 2);
           }
-
-          monster.currentHP = Math.max(0, monster.currentHP - finalDamage);
+          if (damageType === "heal") {
+            finalDamage = -finalDamage; // Heal is negative damage
+            monster.currentHP = Math.min(
+              monster.hp,
+              monster.currentHP - finalDamage
+            );
+          } else {
+            monster.currentHP = Math.max(0, monster.currentHP - finalDamage);
+          }
 
           // Update the monster's current HP
           console.log(
@@ -198,7 +205,7 @@ selectMonstersBtn.addEventListener("click", function () {
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify(monster),
           });
-        };
+        }
       }
       this.innerText = "Select Monsters";
       damageButton.style.display = "none";
@@ -240,15 +247,16 @@ function handleCardSelection(event) {
 }
 damageButton.addEventListener("click", async function () {});
 
-// Modal functionality
+// monster edit Modal functionality
 const monsterModal = document.getElementById("monsterModal");
-monsterModal.addEventListener("show.bs.modal", function (event) {
+monsterModal.addEventListener("show.bs.modal", async function (event) {
   const button = event.relatedTarget; // Button that triggered the modal
   const monsterId = button.getAttribute("data-monster-id"); // Extract info from data-* attributes
 
   // Find the monster by ID
-  const monster = monsters.find((m) => m.id === monsterId);
-  if (!monster) return;
+  const monster = await fetch(
+    `http://localhost:3000/api/encounter/${monsterId}`
+  ).then((response) => response.json());
 
   // Update the modal's content
   const modalTitle = monsterModal.querySelector(".modal-title");
@@ -272,63 +280,157 @@ monsterModal.addEventListener("show.bs.modal", function (event) {
     <input id="monsterCurrentHP" type="number" class="form-control mb-2" value="${
       monster.currentHP
     }" placeholder="Current HP">
-    <p>      <strong>Type:</strong> ${monster.type} <br>
-    <strong>Size:</strong> ${monster.size} <br>
-    <strong>Challenge Rating:</strong> ${monster.cr} <br>
-    <strong>Alignment:</strong> ${monster.alignment} <br>
-    <strong>speed:</strong> ${monster.speed} <br>
-    <strong>stats:</strong> ${JSON.stringify(monster.stats)} <br>
-    <strong>Saving Throws:</strong> ${
-      monster.savingThrows ? JSON.stringify(monster.savingThrows) : "None"
-    } <br>
-    <strong>Skills:</strong> ${
-      monster.skills ? JSON.stringify(monster.skills) : "None"
-    } <br>
-    <strong>Damage Resistances:</strong> ${
-      monster.damageResistances || "None"
-    } <br>
-    <strong>Damage Immunities:</strong> ${
-      monster.damageImmunities || "None"
-    } <br>
-    <strong>Damage Vulnerabilities:</strong> ${
-      monster.damageVulnerabilities || "None"
-    } <br>
-    <strong>Condition Immunities:</strong> ${
-      monster.conditionImmunities || "None"
-    } <br>
-    <strong>Senses:</strong> ${monster.senses || "None"} <br>
-    <strong>Passive Perception:</strong> ${
-      monster.passivePerception || "None"
-    } <br>
-    <strong>Languages:</strong> ${monster.languages || "None"} <br>
-    <strong>Actions:</strong> ${
-      monster.actions
+    <label for="monsterType">Type:</label>
+    <input id="monsterType" type="text" class="form-control mb-2" value="${
+      monster.type
+    }" placeholder="Type">
+    <label for="monsterSize">Size:</label>
+    <input id="monsterSize" type="text" class="form-control mb-2" value="${
+      monster.size
+    }" placeholder="Size">
+    <label for="monsterCr">Challenge Rating:</label>
+    <input id="monsterCr" type="text" class="form-control mb-2" value="${
+      monster.cr
+    }" placeholder="Challenge Rating">
+    <label for="monsterAlignment">Alignment:</label>
+    <input id="monsterAlignment" type="text" class="form-control mb-2" value="${
+      monster.alignment
+    }" placeholder="Alignment">
+    <label for="monsterSpeed">Speed:</label>
+    <input id="monsterSpeed" type="text" class="form-control mb-2" value="${
+      monster.speed
+    }" placeholder="Speed">
+    <label for="monsterStats">Stats:</label>
+    <input id="monsterStats" type="text" class="form-control mb-2" value='${JSON.stringify(
+      monster.stats
+    )}' placeholder='Stats'>
+    <label for='monsterSavingThrows'>Saving Throws:</label>
+    <input id='monsterSavingThrows' type='text' class='form-control mb-2' value='${
+      monster.savingThrows ? JSON.stringify(monster.savingThrows) : ""
+    }' placeholder='Saving Throws'>
+    <label for='monsterSkills'>Skills:</label>
+    <input id='monsterSkills' type='text' class='form-control mb-2' value='${
+      monster.skills ? JSON.stringify(monster.skills) : ""
+    }' placeholder='Skills'>
+    <label for='monsterDamageResistances'>Damage Resistances:</label>
+    <input id='monsterDamageResistances' type='text' class='form-control mb-2' value='${
+      monster.damageResistances || ""
+    }' placeholder='Damage Resistances'>
+    <label for='monsterDamageImmunities'>Damage Immunities:</label>
+    <input id='monsterDamageImmunities' type='text' class='form-control mb-2' value='${
+      monster.damageImmunities || ""
+    }' placeholder='Damage Immunities'>
+    <label for='monsterDamageVulnerabilities'>Damage Vulnerabilities:</label>
+    <input id='monsterDamageVulnerabilities' type='text' class='form-control mb-2' value='${
+      monster.damageVulnerabilities || ""
+    }' placeholder='Damage Vulnerabilities'>
+    <label for='monsterConditionImmunities'>Condition Immunities:</label>
+    <input id='monsterConditionImmunities' type='text' class='form-control mb-2' value='${
+      monster.conditionImmunities || ""
+    }' placeholder='Condition Immunities'>
+    <label for='monsterSenses'>Senses:</label>
+    <input id='monsterSenses' type='text' class='form-control mb-2' value='${
+      monster.senses || ""
+    }' placeholder='Senses'>
+    <label for='monsterPassivePerception'>Passive Perception:</label>
+    <input id='monsterPassivePerception' type='text' class='form-control mb-2' value='${
+      monster.passivePerception || ""
+    }' placeholder='Passive Perception'>
+    <label for='monsterLanguages'>Languages:</label>
+    <input id='monsterLanguages' type='text' class='form-control mb-2' value='${
+      monster.languages || ""
+    }' placeholder='Languages'>
+    <label for='monsterActions'>Actions:</label>
+    <p>
+    ${
+      monster.actions?.length
         ? monster.actions
-            .map((action) => `<div>${action.name}: ${action.description}</div>`)
-            .join("")
-        : "None"
-    } <br>
-    <strong>Abilities:</strong> ${
-      monster.abilities
-        ? monster.abilities
             .map(
-              (ability) => `<div>${ability.name}: ${ability.description}</div>`
+              (action) =>
+                `<div class="mb-2"><strong>${action.name}:</strong> ${action.description}</div>`
             )
             .join("")
-        : "None"
-    } <br>
-
-    <img src="${monster.img}" class="img-fluid" alt="${monster.name}">
+        : "<em>No actions available.</em>"
+    }
+    </p>
+    <input id='monsterActions' type='text' class='form-control mb-2' value='${
+      JSON.stringify(monster.actions) || ""
+    }' placeholder='Actions'>
+    <label for='monsterAbilities'>Abilities:</label>
+    <p>
+    ${
+      monster.abilities?.length
+        ? monster.abilities
+            .map(
+              (ability) =>
+                `<div class="mb-2"><strong>${ability.name}:</strong> ${ability.description}</div>`
+            )
+            .join("")
+        : "<em>No abilities available.</em>"
+    }
+  </p>
+    <input id='monsterAbilities' type='text' class='form-control mb-2' value='${
+      JSON.stringify(monster.abilities) || ""
+    }' placeholder='Abilities'>
+    <input id='monsterImg' type='text' class='form-control mb-2' value='${
+      monster.img || ""
+    }' placeholder="Image URL">
     <button class="btn btn-primary mt-3" id="editMonsterBtn">Edit Monster</button>
   `;
 
   // Add edit functionality
   const editMonsterBtn = document.getElementById("editMonsterBtn");
-  editMonsterBtn.onclick = function () {
-    console.log(`Editing monster with ID: ${monsterId}`);
-    // Here you would typically open an edit form or redirect to an edit page
-    // For example:
-    // window.location.href = `/edit-monster/${monsterId}`;
-    // Or you could open a modal with an edit form
-  };
+  editMonsterBtn.addEventListener("click", async function () {
+    const updatedMonster = {
+      id: monster.id,
+      name: modalBody.querySelector("#monsterName").value,
+      hp: parseInt(modalBody.querySelector("#monsterMaxHP").value),
+      ac: parseInt(modalBody.querySelector("#monsterAC").value),
+      currentHP: parseInt(modalBody.querySelector("#monsterCurrentHP").value),
+      type: modalBody.querySelector("#monsterType").value,
+      size: modalBody.querySelector("#monsterSize").value,
+      alignment: modalBody.querySelector("#monsterAlignment").value,
+      challengeRating: modalBody.querySelector("#monsterCr").value,
+      speed: modalBody.querySelector("#monsterSpeed").value,
+      stats: JSON.parse(modalBody.querySelector("#monsterStats").value),
+      savingThrows: JSON.parse(
+        modalBody.querySelector("#monsterSavingThrows").value
+      ),
+      skills: JSON.parse(modalBody.querySelector("#monsterSkills").value),
+      damageResistances: modalBody.querySelector("#monsterDamageResistances")
+        .value,
+      damageImmunities: modalBody.querySelector("#monsterDamageImmunities")
+        .value,
+      damageVulnerabilities: document.getElementById(
+        "monsterDamageVulnerabilities"
+      ).value,
+      conditionImmunities: modalBody.querySelector("#monsterConditionImmunities")
+        .value,
+      senses: modalBody.querySelector("#monsterSenses").value,
+      passivePerception: modalBody.querySelector("#monsterPassivePerception")
+        .value,
+      languages: modalBody.querySelector("#monsterLanguages").value,
+      actions: JSON.parse(modalBody.querySelector("#monsterActions").value),
+      abilities: JSON.parse(modalBody.querySelector("#monsterAbilities").value),
+      img: modalBody.querySelector("#monsterImg").value,
+    };
+
+    // Send the updated monster data to the server
+    await fetch(`http://localhost:3000/api/encounter/${monster.encounterId}`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(updatedMonster),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        // Close the modal
+        const modal = bootstrap.Modal.getInstance(monsterModal);
+        modal.hide();
+      })
+      .catch((error) => {
+        console.error("Error updating monster:", error);
+      });
+  });
 });
