@@ -38,7 +38,9 @@ const addMonsterBtn = document.getElementById("add-button");
 addMonsterBtn.addEventListener("click", async function () {
   // add a monster form monster.json to encounter.json
   const monsterName = searchInput.value.trim();
-  const monster = await fetch(`http://127.0.0.1:3000/api/monsters/name/${monsterName}`)
+  const monster = await fetch(
+    `http://127.0.0.1:3000/api/monsters/name/${monsterName}`
+  )
     .then((response) => {
       if (!response.ok) {
         throw new Error("Monster not found");
@@ -53,7 +55,7 @@ addMonsterBtn.addEventListener("click", async function () {
   if (monster) {
     // Add the monsters to the encounter.json
     const monsterNum = document.getElementById("monster-count").value;
-    if(monsterNum == "Number of monsters") {
+    if (monsterNum == "Number of monsters") {
       alert("Please select the number of monsters to add.");
       return;
     }
@@ -72,9 +74,7 @@ addMonsterBtn.addEventListener("click", async function () {
       });
     }
   }
-
 });
-
 
 // Display monsters in cards
 let monsterCardsContainer = document.getElementById("monster-cards"); // Clear existing content
@@ -117,20 +117,21 @@ monsters.forEach((monster) => {
   `;
   monsterCardsContainer.appendChild(monsterCard);
   //delete functionality
-  const deleteMonsterBtn = document.getElementById(`deleteMonsterBtn${monster.encounterId}`);
+  const deleteMonsterBtn = document.getElementById(
+    `deleteMonsterBtn${monster.encounterId}`
+  );
   deleteMonsterBtn.addEventListener("click", async function (event) {
     event.preventDefault(); // Prevent default link behavior
     const monsterId = monster.encounterId; // Get the monster ID from the button's data attribute
     console.log(`Deleting monster with ID: ${monsterId}`);
-    
+
     await fetch(`http://127.0.0.1:3000/api/encounter/${monsterId}`, {
       method: "DELETE",
     });
   });
 });
 
-
-// monsters selection functionality
+// monsters damage functionality
 const selectMonstersBtn = document.getElementById("selectMonstersBtn");
 const damageButton = document.getElementById("damage-button");
 const selectedMonsters = new Set();
@@ -149,17 +150,55 @@ selectMonstersBtn.addEventListener("click", function () {
       card.classList.add("selectable");
       card.addEventListener("click", handleCardSelection);
     });
-    damageButton.addEventListener("click", function () {
+    damageButton.addEventListener("click", async function () {
       if (selectedMonsters.size != 0) {
         const monsterIds = [...selectedMonsters];
-        console.log("Adding damage to monsters:", monsterIds);
-        // Here you would typically send the selected monster IDs to the server
-        // to apply damage or perform some action.
-        // For example:
-        // fetch('/api/monsters/damage', {
-        //   method: 'POST',
-        //   headers: { 'Content-Type': 'application/json' },
-        //   body: JSON.stringify({ monsterIds })
+        if (selectedMonsters.size === 0) {
+          alert("Please select at least one monster.");
+          return;
+        }
+
+        let damageAmount = document.getElementById("damage-input").value;
+        const damageType = document.getElementById("damageType").value;
+
+        if (!damageAmount || !damageType) {
+          alert("Please enter a valid damage amount and type.");
+          return;
+        }
+
+        for (const monsterId of monsterIds) {
+          let monster = await fetch(
+            `http://localhost:3000/api/encounter/${monsterId}`
+          );
+          monster = await monster.json();
+
+          if (
+            monster.damageImmunities &&
+            monster.damageImmunities.includes(damageType)
+          ) {
+            return; // Immune = no damage applied
+          }
+
+          let finalDamage = parseInt(damageAmount);
+          if (
+            monster.damageResistances &&
+            monster.damageResistances.includes(damageType)
+          ) {
+            finalDamage = Math.ceil(finalDamage / 2);
+          }
+
+          monster.currentHP = Math.max(0, monster.currentHP - finalDamage);
+
+          // Update the monster's current HP
+          console.log(
+            `Updating monster with ID: ${monsterId} with damage: ${damageAmount}`
+          );
+          await fetch(`http://localhost:3000/api/encounter/${monsterId}`, {
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(monster),
+          });
+        };
       }
       this.innerText = "Select Monsters";
       damageButton.style.display = "none";
@@ -169,7 +208,6 @@ selectMonstersBtn.addEventListener("click", function () {
         card.classList.remove("selectable", "selected");
         card.removeEventListener("click", handleCardSelection);
       });
-      window.location.reload(); // Reload the page to reflect changes
     });
   } else {
     this.innerText = "Select Monsters";
@@ -182,7 +220,6 @@ selectMonstersBtn.addEventListener("click", function () {
     });
   }
 });
-
 function handleCardSelection(event) {
   if (!selectionMode) return;
 
@@ -197,9 +234,11 @@ function handleCardSelection(event) {
     card.classList.remove("selected");
   } else {
     selectedMonsters.add(monsterId);
+
     card.classList.add("selected");
   }
 }
+damageButton.addEventListener("click", async function () {});
 
 // Modal functionality
 const monsterModal = document.getElementById("monsterModal");
