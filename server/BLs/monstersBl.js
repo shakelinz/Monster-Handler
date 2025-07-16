@@ -12,7 +12,7 @@ const getAllMonsters = async () => {
 
 const getMonsterById = async (id) => {
   const monsters = await DL.readData(localPath);
-  const monster = monsters.find((monster) => monster.id === id);
+  const monster = monsters.find((monster) => monster.id == id);
   if (!monster) {
     return `monster with id ${id} not found`;
   }
@@ -41,7 +41,7 @@ const updateMonster = async (id, updatedMonster) => {
 
 const deleteMonster = async (id) => {
   const monsters = await DL.readData(localPath);
-  const index = monsters.findIndex((monster) => monster.id === id);
+  const index = monsters.findIndex((monster) => monster.id == id);
   if (index === -1) {
     return `monster with id ${id} not found`;
   }
