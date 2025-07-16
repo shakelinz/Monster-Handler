@@ -404,8 +404,9 @@ monsterModal.addEventListener("show.bs.modal", async function (event) {
       damageVulnerabilities: document.getElementById(
         "monsterDamageVulnerabilities"
       ).value,
-      conditionImmunities: modalBody.querySelector("#monsterConditionImmunities")
-        .value,
+      conditionImmunities: modalBody.querySelector(
+        "#monsterConditionImmunities"
+      ).value,
       senses: modalBody.querySelector("#monsterSenses").value,
       passivePerception: modalBody.querySelector("#monsterPassivePerception")
         .value,
@@ -433,4 +434,20 @@ monsterModal.addEventListener("show.bs.modal", async function (event) {
         console.error("Error updating monster:", error);
       });
   });
+});
+
+// delete the whole encounter
+document.getElementById("deleteAllBtn").addEventListener("click", async () => {
+  if (!confirm(`Are you sure you want to delete the whole encounter`)) {
+    return;
+  }
+  const allMonsters = await fetch("http://127.0.0.1:3000/api/encounter/").then(
+    (response) => response.json()
+  );
+  for (const monster of allMonsters) {
+    await fetch(`http://127.0.0.1:3000/api/encounter/${monster.encounterId}`, {
+      method: "DELETE",
+    });
+  }
+  window.location.reload();
 });
