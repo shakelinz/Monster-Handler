@@ -83,7 +83,7 @@ let monsters = await fetch("http://127.0.0.1:3000/api/encounter/").then(
 );
 monsters.forEach((monster) => {
   let monsterCard = document.createElement("div");
-  monsterCard.className = "col-md-4 mb-4";
+  monsterCard.className = "col-md-2 mb-4";
   monsterCard.style.borderRadius = "8px"; // Rounded corners
   //   green border for monsters with HP > 0, red for those with HP <= 0
   let monsterColor = "";
@@ -101,7 +101,7 @@ monsters.forEach((monster) => {
     <div class="card ${monsterColor} h-100">
       <img src="${monster.img}" class="card-img-top" alt="${monster.name}"
        style = "width: fit-content;
-       height: 15vw;
+       height: 5vw;
        object-fit: cover;">
        
       <div class="card-body">
@@ -110,8 +110,8 @@ monsters.forEach((monster) => {
         <p class="card-text">max HP: ${monster.hp}</p>
         <p class="card-text">AC: ${monster.ac}</p>
         <p class="card-text">current HP: ${monster.currentHP}</p>
-        <button class="btn btn-danger" id="deleteMonsterBtn${monster.encounterId}" data-monster-id="${monster.encounterId}">Delete Monster</button>
-        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#monsterModal" data-monster-id="${monster.encounterId}">View Details and edit</a>
+        <button class="btn btn-danger" id="deleteMonsterBtn${monster.encounterId}" data-monster-id="${monster.encounterId}">Delete</button>
+        <a href="#" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#monsterModal" data-monster-id="${monster.encounterId}">edit</a>
       </div>
     </div>
   `;
@@ -137,6 +137,38 @@ const damageButton = document.getElementById("damage-button");
 const selectedMonsters = new Set();
 let selectionMode = false;
 
+const selectAllBtn = document.getElementById("selectAllBtn");
+
+selectAllBtn.addEventListener("click", function () {
+  if (!selectionMode) {
+    alert("Click 'Select Monsters' first to enable selection mode.");
+    return;
+  }
+
+  const monsterCards = document.querySelectorAll(".card");
+
+  let allSelected = true;
+  monsterCards.forEach((card) => {
+    const monsterId = card.querySelector("a").getAttribute("data-monster-id");
+    if (!selectedMonsters.has(monsterId)) {
+      allSelected = false;
+    }
+  });
+
+  monsterCards.forEach((card) => {
+    const monsterId = card.querySelector("a").getAttribute("data-monster-id");
+
+    if (!allSelected) {
+      selectedMonsters.add(monsterId);
+      card.classList.add("selected");
+    } else {
+      selectedMonsters.delete(monsterId);
+      card.classList.remove("selected");
+    }
+  });
+
+  selectAllBtn.innerText = allSelected ? "Select All" : "Deselect All";
+});
 selectMonstersBtn.addEventListener("click", function () {
   selectionMode = !selectionMode;
 
@@ -145,6 +177,7 @@ selectMonstersBtn.addEventListener("click", function () {
   if (selectionMode) {
     this.innerText = "Stop selecting Monsters";
     damageButton.style.display = "block";
+    selectAllBtn.style.display = "block";
 
     monsterCards.forEach((card) => {
       card.classList.add("selectable");
@@ -172,14 +205,14 @@ selectMonstersBtn.addEventListener("click", function () {
           );
           monster = await monster.json();
 
+          let finalDamage = parseInt(damageAmount);
           if (
             monster.damageImmunities &&
             monster.damageImmunities.includes(damageType)
           ) {
-            return; // Immune = no damage applied
+            finalDamage = 0;
           }
 
-          let finalDamage = parseInt(damageAmount);
           if (
             monster.damageResistances &&
             monster.damageResistances.includes(damageType)
@@ -209,6 +242,7 @@ selectMonstersBtn.addEventListener("click", function () {
       }
       this.innerText = "Select Monsters";
       damageButton.style.display = "none";
+      selectAllBtn.style.display = "none";
       selectedMonsters.clear();
 
       monsterCards.forEach((card) => {
@@ -219,6 +253,7 @@ selectMonstersBtn.addEventListener("click", function () {
   } else {
     this.innerText = "Select Monsters";
     damageButton.style.display = "none";
+    selectAllBtn.style.display = "none";
     selectedMonsters.clear();
 
     monsterCards.forEach((card) => {
@@ -245,7 +280,6 @@ function handleCardSelection(event) {
     card.classList.add("selected");
   }
 }
-damageButton.addEventListener("click", async function () {});
 
 // monster edit Modal functionality
 const monsterModal = document.getElementById("monsterModal");

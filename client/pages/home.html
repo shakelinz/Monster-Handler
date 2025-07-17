@@ -47,12 +47,12 @@
 
     <!-- title -->
     <div id="title">
-      <h1 class="text-center mt-5">Encounter Builder</h1>
+      <h1 class="text-center mt-3">Encounter Builder</h1>
     </div>
 
     <!-- Monster Search Bar -->
     <div id="monster-searchbar">
-      <div class="container mt-5 bg-success p-4 rounded">
+      <div class="container mt-3 bg-success p-4 rounded">
         <div class="row justify-content-center">
           <div class="col-md-6">
             <h2 class="text-center">Add monsters to the encounter</h2>
@@ -89,13 +89,18 @@
           <div class="col-md-2">
             <button id="add-button" class="btn btn-primary">Add</button>
           </div>
+          <div class="col-md-2">
+            <button id="deleteAllBtn" class="btn btn-primary">
+              Delete the whole encounter
+            </button>
+          </div>
         </div>
       </div>
     </div>
 
     <!-- Damage Bar -->
     <div id="damageBar">
-      <div class="container mt-5 p-4 rounded bg-danger">
+      <div class="container mt-3 p-4 rounded bg-danger">
         <div class="row justify-content-center">
           <div class="col-md-6">
             <h2 class="text-center">Add damage to the encounter</h2>
@@ -135,24 +140,19 @@
               <option value="heal">heal</option>
             </select>
           </div>
+          <div class="col-md-3">
+            <button id="selectMonstersBtn" class="btn btn-primary">
+              Select Monsters
+            </button>
+          </div>
           <div class="col-md-2">
-            <!-- <select id="monsterNum" class="form-select w-10">
-              <option value="" disabled selected>Select number of monsters to hurt</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-              <option value="4">4</option>
-              <option value="5">5</option>
-              <option value="6">6</option>
-              <option value="7">7</option>
-              <option value="8">8</option>
-              <option value="all">all</option>
-            </select> -->
-            <div class="col-md-3">
-              <button id="selectMonstersBtn" class="btn btn-primary">
-                Select Monsters
-              </button>
-            </div>
+            <button
+              id="selectAllBtn"
+              class="btn btn-primary"
+              style="display: none"
+            >
+              Select All
+            </button>
           </div>
           <div class="col-md-2">
             <button
@@ -167,21 +167,8 @@
       </div>
     </div>
 
-    <!-- button to delete all monsters from the encounter -->
-    <div id="deleteAll">
-      <div class="container mt-5 p-4 rounded bg-danger">
-        <div class="row justify-content-center">
-          <div class="col-md-3">
-             <button id="deleteAllBtn" class="btn btn-primary">
-                Delete the whole encounter
-              </button>
-          </div>
-        </div>
-      </div>
-    </div>
-
     <!-- monster card field -->
-    <div id="monster-card-field" class="container mt-5">
+    <div id="monster-card-field" class="container-fluid mt-3">
       <div class="row" id="monster-cards">
         <!-- Monster cards will be dynamically inserted here -->
       </div>
