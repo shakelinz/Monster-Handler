@@ -13,3 +13,5 @@ mini navbar to navigate between the pages
 title
 list of accordion buttons for the monsters
     in each accordion theres the full card of the monster and edit and delete buttons
+    each monster of the same id gets a new name
+    alert on delete buttons

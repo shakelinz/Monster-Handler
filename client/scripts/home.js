@@ -59,9 +59,18 @@ addMonsterBtn.addEventListener("click", async function () {
       alert("Please select the number of monsters to add.");
       return;
     }
+    let encounterMonsters = await fetch(
+      "http://127.0.0.1:3000/api/encounter/"
+    ).then((response) => response.json());
+    let lastMonster = encounterMonsters.findLast(currMonster=>currMonster.name.includes(monster.name));
+    let counter = 0;
+    if(lastMonster){
+      counter = parseInt(lastMonster.name.slice(monster.name.length));
+      counter ++;
+    }
     for (let i = 0; i < monsterNum; i++) {
       // Clone the monster object to avoid modifying the original
-      const monsterClone = { ...monster };
+      const monsterClone = { ...monster, name: (monster.name + counter.toString()) };
       // Reset currentHP to max HP
       monsterClone.currentHP = monsterClone.hp;
       // Add the monster to the encounter
@@ -72,6 +81,7 @@ addMonsterBtn.addEventListener("click", async function () {
         },
         body: JSON.stringify(monsterClone),
       });
+      counter++;
     }
   }
 });
@@ -106,7 +116,6 @@ monsters.forEach((monster) => {
        
       <div class="card-body">
         <h5 class="card-title ">monster: ${monster.name}</h5>
-        <h5 class="card-title ">name: ${monster.name}</h5>
         <p class="card-text">max HP: ${monster.hp}</p>
         <p class="card-text">AC: ${monster.ac}</p>
         <p class="card-text">current HP: ${monster.currentHP}</p>
@@ -122,9 +131,10 @@ monsters.forEach((monster) => {
   );
   deleteMonsterBtn.addEventListener("click", async function (event) {
     event.preventDefault(); // Prevent default link behavior
+    if (!confirm(`Are you sure you want to delete ${monster.name}`)) {
+      return;
+    }
     const monsterId = monster.encounterId; // Get the monster ID from the button's data attribute
-    console.log(`Deleting monster with ID: ${monsterId}`);
-
     await fetch(`http://127.0.0.1:3000/api/encounter/${monsterId}`, {
       method: "DELETE",
     });
